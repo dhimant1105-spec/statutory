@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PF Statutory | EPFO ECR Manager</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div><div class="brand">PF <span>STATUTORY</span></div><div class="subbrand">EPFO contribution & ECR workspace</div></div>
+  <div class="top-actions"><span class="local-tag">● Local data storage</span><button class="btn ghost" id="backupBtn">Backup data</button><label class="btn ghost file-label">Restore backup<input id="restoreInput" type="file" accept=".json,application/json" hidden></label></div>
+</header>
+<div class="shell">
+<aside class="sidebar">
+  <button class="nav active" data-page="dashboard">▦ <span>Dashboard</span></button>
+  <button class="nav" data-page="employees">♙ <span>Employee master</span></button>
+  <button class="nav" data-page="ecr">▤ <span>Monthly ECR</span></button>
+  <button class="nav" data-page="settings">⚙ <span>Settings & rates</span></button>
+  <div class="side-note"><b>Important</b><p>Review statutory rates, ceilings and EPFO rules before filing. This tool is a calculation and record-keeping aid, not an EPFO filing portal.</p></div>
+</aside>
+<main class="content">
+<section id="dashboard" class="page active">
+  <div class="page-head"><div><p class="eyebrow">OVERVIEW</p><h1>Dashboard</h1><p class="muted">Your employee and monthly filing position at a glance.</p></div><button class="btn primary" data-go="ecr">＋ Create monthly ECR</button></div>
+  <div class="stats">
+    <article class="stat"><span>Active employees</span><strong id="statEmployees">0</strong><small>In employee master</small></article>
+    <article class="stat"><span>Months recorded</span><strong id="statMonths">0</strong><small>Unique wage months</small></article>
+    <article class="stat"><span>Latest ECR month</span><strong id="statLatest">—</strong><small>Most recent record</small></article>
+    <article class="stat"><span>Latest employer total</span><strong id="statTotal">₹0.00</strong><small>MPF + CPF + EPS + EDLI + admin</small></article>
+  </div>
+  <div class="panel"><div class="panel-head"><div><h2>Recent ECR records</h2><p class="muted">Latest employee-month contribution records.</p></div><button class="btn small ghost" data-go="ecr">View monthly ECR</button></div><div class="table-wrap"><table><thead><tr><th>Wage month</th><th>Employee</th><th>UAN</th><th>PF wages</th><th>MPF</th><th>EPS</th><th>CPF</th><th>Total</th></tr></thead><tbody id="recentRows"></tbody></table></div><div id="recentEmpty" class="empty">No ECR records yet. Add employees and create your first wage-month record.</div></div>
+</section>
+<section id="employees" class="page">
+  <div class="page-head"><div><p class="eyebrow">MASTER DATA</p><h1>Employee master</h1><p class="muted">Maintain employee identifiers and EPF eligibility details.</p></div><div class="actions"><button class="btn ghost" id="employeeImportBtn">Import CSV</button><input type="file" id="employeeImport" accept=".csv,text/csv" hidden><button class="btn primary" id="addEmployeeBtn">＋ Add employee</button></div></div>
+  <div class="toolbar"><input id="employeeSearch" placeholder="Search name, employee code or UAN…"><select id="employeeStatus"><option value="all">All employees</option><option value="active">Active</option><option value="inactive">Inactive</option></select><span id="employeeCount" class="muted"></span></div>
+  <div class="panel"><div class="table-wrap"><table><thead><tr><th>Employee code</th><th>Employee name</th><th>UAN number</th><th>Joining date</th><th>Pension member</th><th>Status</th><th></th></tr></thead><tbody id="employeeRows"></tbody></table></div><div id="employeeEmpty" class="empty">No employees found. Add an employee or import a CSV file.</div></div>
+</section>
+<section id="ecr" class="page">
+  <div class="page-head"><div><p class="eyebrow">CONTRIBUTIONS</p><h1>Monthly ECR</h1><p class="muted">Calculate and retain employee-wise contributions by wage month.</p></div><button class="btn primary" id="newEcrBtn">＋ New wage month</button></div>
+  <div class="toolbar"><label>Wage month <input type="month" id="monthFilter"></label><input id="ecrSearch" placeholder="Search employee, code or UAN…"><button class="btn ghost" id="exportEcrBtn">Export selected month CSV</button></div>
+  <div class="summary-strip" id="monthSummary"></div>
+  <div class="panel"><div class="table-wrap"><table><thead><tr><th>Employee code / name</th><th>UAN</th><th>PF wages</th><th>Pension wages</th><th>MPF</th><th>EPS</th><th>CPF</th><th>EDLI</th><th>Admin</th><th>Total</th><th>Filing status</th><th></th></tr></thead><tbody id="ecrRows"></tbody></table></div><div id="ecrEmpty" class="empty">Choose a wage month or create a new one.</div></div>
+</section>
+<section id="settings" class="page">
+  <div class="page-head"><div><p class="eyebrow">CONFIGURATION</p><h1>Settings & rates</h1><p class="muted">Set the rates and wage ceilings used by future calculations.</p></div></div>
+  <div class="notice"><b>Statutory caution</b> These values are editable because rates, ceilings and applicability can change. Verify them against current EPFO notifications and your establishment's applicable rules before generating an ECR.</div>
+  <form id="settingsForm" class="panel form-panel">
+    <div class="form-grid">
+      <label>MPF rate (%)<input type="number" step="0.01" min="0" max="100" id="mpfRate" required></label>
+      <label>CPF rate for non-pension members (%)<input type="number" step="0.01" min="0" max="100" id="cpfRate" required></label>
+      <label>Pension / EPS rate (%)<input type="number" step="0.01" min="0" max="100" id="pensionRate" required></label>
+      <label>EPS pension wage ceiling (₹)<input type="number" step="0.01" min="0" id="epsCeiling" required></label>
+      <label>EDLI rate (%)<input type="number" step="0.001" min="0" max="100" id="edliRate" required></label>
+      <label>EDLI wage cap (₹)<input type="number" step="0.01" min="0" id="edliCap" required></label>
+      <label>Admin charge rate (%)<input type="number" step="0.001" min="0" max="100" id="adminRate" required></label>
+    </div>
+    <div class="form-actions"><p class="muted">Changes apply to new calculations only. Existing monthly records retain their saved figures.</p><button class="btn primary" type="submit">Save settings</button></div>
+  </form>
+  <div class="panel formula"><h2>Calculation logic</h2><ul>
+  <li><b>MPF</b> = PF wages × MPF rate.</li><li><b>If pension member:</b> EPS = min(Pension wages, EPS ceiling) × pension rate; CPF = MPF − EPS.</li><li><b>If not a pension member:</b> CPF = PF wages × non-pension CPF rate; EPS = ₹0.</li><li><b>EDLI</b> = min(PF wages, EDLI wage cap) × EDLI rate.</li><li><b>Admin charges</b> = PF wages × admin charge rate.</li></ul><p class="muted">Amounts are rounded to two decimal places. If EPS exceeds MPF, the record is flagged and must be reviewed.</p></div>
+</section>
+</main>
+</div>
+<dialog id="employeeDialog"><form id="employeeForm" method="dialog" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">EMPLOYEE MASTER</p><h2 id="employeeDialogTitle">Add employee</h2></div><button type="button" class="icon-btn" data-close="employeeDialog">×</button></div><input type="hidden" id="employeeId"><div class="form-grid">
+<label>Employee code *<input id="empCode" required maxlength="30"></label><label>Employee name *<input id="empName" required maxlength="100"></label>
+<label>UAN number *<input id="empUan" required inputmode="numeric" maxlength="12" pattern="[0-9]{12}" title="Enter a 12-digit UAN"></label><label>Joining date<input id="empJoin" type="date"></label>
+<label>Date of exit<input id="empExit" type="date"></label><label>Pension member *<select id="empPension"><option value="yes">Yes</option><option value="no">No</option></select></label>
+<label>EPF eligible *<select id="empEligible"><option value="yes">Yes</option><option value="no">No</option></select></label><label>Employee status<select id="empStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select></label>
+<label class="wide">Remarks<input id="empRemarks" maxlength="250" placeholder="Optional notes"></label></div><div class="form-actions"><button type="button" class="btn ghost" data-close="employeeDialog">Cancel</button><button class="btn primary" type="submit">Save employee</button></div></form></dialog>
+<dialog id="ecrDialog"><form id="ecrForm" method="dialog" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">MONTHLY CONTRIBUTION</p><h2 id="ecrDialogTitle">Create wage month</h2></div><button type="button" class="icon-btn" data-close="ecrDialog">×</button></div>
+<div class="form-grid"><label>Wage month *<input type="month" id="ecrMonth" required></label><label>Employee *<select id="ecrEmployee" required></select></label><label>PF wages (₹) *<input type="number" id="pfWages" min="0" step="0.01" required></label><label>Pension wages (₹)<input type="number" id="pensionWages" min="0" step="0.01" value="0"></label><label>Days worked<input type="number" id="daysWorked" min="0" max="31" step="1" value="26"></label><label>Non-contributing days<input type="number" id="nonContribDays" min="0" max="31" step="1" value="0"></label><label>Filing status<select id="filingStatus"><option value="draft">Draft</option><option value="filed">Filed</option></select></label><label>Filing date<input type="date" id="filingDate"></label><label class="wide">Remarks<input id="ecrRemarks" maxlength="250"></label></div>
+<div class="calc-preview" id="calcPreview"><span>Enter wages to preview contributions.</span></div><div class="form-actions"><button type="button" class="btn ghost" data-close="ecrDialog">Cancel</button><button class="btn primary" type="submit">Save contribution</button></div></form></dialog>
+<div id="toast" role="status"></div>
+<script src="app.js"></script>
+</body></html>
